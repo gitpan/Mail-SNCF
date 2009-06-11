@@ -14,11 +14,11 @@ Mail::SNCF - A parser for booking messages sent by the French rail company
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 
 =head1 SYNOPSIS
@@ -48,7 +48,8 @@ sub parse {
     bless $self, $class;
 
     while (my $a = $folder->next_message()) {
-        next unless $a->header("Subject") =~ /Confirmation de votre commande/;
+		my $subject = $a->header("Subject");
+        next unless $subject =~ /Confirmation.*(commande|voyage).*/;
         my @lines = split /\n/, $a->body();
         for(my $i = 0; $i < @lines; $i++) {
             next unless $lines[$i] =~ /=A0------------------------------------------------/;
